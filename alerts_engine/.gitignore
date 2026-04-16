@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+agent.db
+agent_state.json
+images/
+test_output.txt
+agent.log
+*.log

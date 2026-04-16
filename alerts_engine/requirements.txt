@@ -1,0 +1,7 @@
+python-dotenv
+requests
+feedparser
+google-genai
+Pillow
+trafilatura
+pytrends

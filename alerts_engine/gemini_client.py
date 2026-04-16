@@ -1,0 +1,188 @@
+"""
+Gemini Client Helper — Handles API key rotation and retries when rate limits are exhausted.
+"""
+import logging
+import time
+import re
+from google import genai
+import config
+
+logger = logging.getLogger(__name__)
+
+def generate_content_with_fallback(
+    model,
+    contents,
+    generation_config=None,
+    max_retries_per_key=3,
+    base_delay=20
+):
+    """
+    Call Gemini API with exponential backoff on 429/RESOURCE_EXHAUSTED errors.
+    Cycles through available API keys in config.GEMINI_API_KEYS.
+    """
+    keys = config.GEMINI_API_KEYS
+    if not keys:
+        raise ValueError("No Gemini API keys configured.")
+
+    for key_idx, current_key in enumerate(keys):
+        client = genai.Client(api_key=current_key)
+
+        for attempt in range(max_retries_per_key + 1):
+            try:
+                if generation_config:
+                    response = client.models.generate_content(
+                        model=model,
+                        contents=contents,
+                        config=generation_config
+                    )
+                else:
+                    response = client.models.generate_content(
+                        model=model,
+                        contents=contents
+                    )
+                return response
+            except Exception as e:
+                error_str = str(e)
+                is_rate_limit = "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
+
+                if not is_rate_limit:
+                    if key_idx == len(keys) - 1:
+                        raise
+                    logger.warning(f"  ⚠️ Error from key {key_idx + 1}: {e}. Trying next key...")
+                    break
+
+                if "limit: 0" in error_str or "PerDay" in error_str:
+                    logger.warning(f"  ⚠️ Gemini daily quota exhausted for key {key_idx + 1}/{len(keys)}.")
+                    break
+
+                if key_idx < len(keys) - 1:
+                    logger.warning(f"  ⚠️ Gemini rate limited on key {key_idx + 1}, trying next key...")
+                    break
+
+                if attempt >= max_retries_per_key:
+                    logger.error(f"  ❌ Gemini API exhausted all {max_retries_per_key} retries.")
+                    raise
+
+                delay = base_delay * (2 ** attempt)
+                retry_match = re.search(r'retry in ([\d.]+)s', error_str)
+                if retry_match:
+                    parsed_delay = float(retry_match.group(1))
+                    delay = max(delay, parsed_delay + 2)
+
+                logger.warning(f"  ⏳ Gemini rate limited (attempt {attempt + 1}/{max_retries_per_key}). "
+                               f"Waiting {delay:.0f}s...")
+                time.sleep(delay)
+
+    raise Exception("All Gemini API keys failed or exhausted quota.")
+
+
+def generate_image_with_gemini_flash(prompt, max_retries_per_key=2, base_delay=10):
+    """
+    Generate an image using Gemini 2.5 Flash Image (free tier).
+    Returns response or None.
+    """
+    try:
+        from google.genai.types import GenerateContentConfig, Modality
+    except ImportError:
+        from google.genai import types
+        GenerateContentConfig = getattr(types, "GenerateContentConfig", None)
+        Modality = getattr(types, "Modality", None)
+        if GenerateContentConfig is None or Modality is None:
+            logger.warning("  Could not import GenerateContentConfig/Modality")
+            return None
+
+    keys = config.GEMINI_API_KEYS
+    if not keys:
+        return None
+
+    contents = (
+        f"Generate a single high-quality, appetizing food photography image. "
+        f"No text or captions in the image. Bright, warm lighting. "
+        f"Topic: {prompt}"
+    )
+    config_obj = GenerateContentConfig(
+        response_modalities=[Modality.TEXT, Modality.IMAGE],
+    )
+
+    for key_idx, current_key in enumerate(keys):
+        client = genai.Client(api_key=current_key)
+        for attempt in range(max_retries_per_key + 1):
+            try:
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash-preview-04-17",
+                    contents=contents,
+                    config=config_obj,
+                )
+                return response
+            except Exception as e:
+                error_str = str(e)
+                if "404" in error_str or "not found" in error_str.lower():
+                    logger.warning(f"  Gemini image model not available: {e}")
+                    return None
+                if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+                    if attempt >= max_retries_per_key:
+                        return None
+                    time.sleep(base_delay * (2 ** attempt))
+                    continue
+                if key_idx < len(keys) - 1:
+                    break
+                logger.warning(f"  Gemini Flash Image failed: {e}")
+                return None
+    return None
+
+
+def generate_image_with_fallback(
+    model,
+    prompt,
+    generation_config=None,
+    max_retries_per_key=3,
+    base_delay=20
+):
+    """
+    Call Gemini API generate_images with exponential backoff on 429 errors.
+    """
+    keys = config.GEMINI_API_KEYS
+    if not keys:
+        raise ValueError("No Gemini API keys configured.")
+
+    for key_idx, current_key in enumerate(keys):
+        client = genai.Client(api_key=current_key)
+
+        for attempt in range(max_retries_per_key + 1):
+            try:
+                response = client.models.generate_images(
+                    model=model,
+                    prompt=prompt,
+                    config=generation_config
+                )
+                return response
+            except Exception as e:
+                error_str = str(e)
+                is_rate_limit = "429" in error_str or "RESOURCE_EXHAUSTED" in error_str
+
+                if not is_rate_limit:
+                    if "404" in error_str or key_idx == len(keys) - 1:
+                        raise
+                    logger.warning(f"  ⚠️ Error from key {key_idx + 1}: {e}. Trying next key...")
+                    break
+
+                if "limit: 0" in error_str or "PerDay" in error_str:
+                    break
+
+                if key_idx < len(keys) - 1:
+                    break
+
+                if attempt >= max_retries_per_key:
+                    raise
+
+                delay = base_delay * (2 ** attempt)
+                retry_match = re.search(r'retry in ([\d.]+)s', error_str)
+                if retry_match:
+                    parsed_delay = float(retry_match.group(1))
+                    delay = max(delay, parsed_delay + 2)
+
+                logger.warning(f"  ⏳ Gemini rate limited (attempt {attempt + 1}/{max_retries_per_key}). "
+                               f"Waiting {delay:.0f}s...")
+                time.sleep(delay)
+
+    raise Exception("All Gemini API keys failed or exhausted quota.")

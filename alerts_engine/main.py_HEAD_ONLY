@@ -1,0 +1,90 @@
+import argparse
+import hashlib
+import json
+import logging
+import os
+import sys
+import time
+from datetime import datetime
+
+# Prevent UnicodeEncodeError when printing emojis to standard Windows consoles
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+
+import config
+from database.db import (
+    get_connection, cleanup_old_data, save_topic_to_cache,
+    get_topic_from_cache, record_notification, mark_notified,
+    record_published_topic, count_published_topics, get_recent_published_topics
+)
+from sources.rss_monitor import fetch_rss_stories
+from sources.trends_monitor import fetch_trending_queries
+from sources.youtube_monitor import fetch_youtube_videos
+from sources.news_api_monitor import fetch_news_headlines
+from detection.spike_detector import detect_spikes
+from writer.article_generator import generate_article
+from writer.review_assistant import (
+    duplicate_risk, build_preapproval_checklist, rankmath_polylang_warnings
+)
+from publisher.wordpress_client import (
+    create_post, update_post_status, test_wordpress_connection
+)
+import publisher.wordpress_client as wp_client
+from publisher.image_handler import generate_featured_image
+from notifications.telegram_bot import (
+    send_trending_alert, send_simple_message, send_article_preview,
+    send_publish_confirmation, send_generating_status, send_image_preview,
+    send_pending_reminder, get_updates, answer_callback_query, test_connection
+)
+
+# --- Unified Pinterest Integration ---
+# This allows the bot to trigger premium Pin generation after WP push.
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "pinterest_engine"))
+try:
+    from pin_generator import process_new_pin
+except ImportError:
+    process_new_pin = None
+
+#  Logging Setup 
+logging.basicConfig(
+    level=getattr(logging, config.LOG_LEVEL, logging.INFO),
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(config.LOG_FILE, encoding="utf-8"),
+    ]
+)
+logger = logging.getLogger("agent")
+
+#  Global State 
+STATE_FILE = os.path.join(os.path.dirname(__file__), "agent_state.json")
+PUBLISHED_POSTS_FILE = os.path.join(os.path.dirname(__file__), "published_posts.json")
+
+def append_latest_published_post(title, slug, url):
+    """Append a newly published article to the internal links registry."""
+    if not title or not slug or not url:
+        return
+        
+    posts = {}
+    if os.path.exists(PUBLISHED_POSTS_FILE):
+        try:
+            with open(PUBLISHED_POSTS_FILE, "r", encoding="utf-8") as f:
+                posts = json.load(f)
+        except Exception as e:
+            logger.warning(f"Could not load {PUBLISHED_POSTS_FILE}: {e}")
+            
+    posts[slug] = {
+        "url": url,
+        "anchor": title
+    }
+    
+    try:
+        with open(PUBLISHED_POSTS_FILE, "w", encoding="utf-8") as f:
+            json.dump(posts, f, indent=4, ensure_ascii=False)
+        logger.info(f"Appended '{title}' to internal links registry.")
+    except Exception as e:
+        logger.error(f"Failed to save {PUBLISHED_POSTS_FILE}: {e}")
+
+# ... (rest of the file remains original)
+# I will output the FULL file to avoid further corruption.
