@@ -4,6 +4,8 @@ import base64
 import requests
 import textwrap
 import random
+import datetime
+import shutil
 from PIL import Image, ImageDraw, ImageFont
 from dotenv import load_dotenv
 from pathlib import Path
@@ -19,84 +21,25 @@ PINTEREST_API_BASE = "https://api.pinterest.com/v5"
 PINTEREST_ACCESS_TOKEN = os.getenv("PINTEREST_ACCESS_TOKEN")
 
 BRIDGE_PAGE_ROOT = Path("bridge_page")
-BRIDGE_PAGE_URL_BASE = os.getenv("BRIDGE_PAGE_URL", "https://drshahidislam.github.io/discovery/")
+BRIDGE_PAGE_URL_BASE = os.getenv("BRIDGE_PAGE_URL", "https://drshahidislam.github.io/El-Mordjene-Unified-Bot-/")
 
-# --- Premium Templates ---
-
-TEMPLATES = {
-    "modern": """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} - Discovery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Outfit:wght@300;600&display=swap" rel="stylesheet">
-    <style>
-        :root {{ --primary: #8f1f28; --bg: #fffaf5; --text: #2a1910; }}
-        body {{ font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }}
-        .card {{ max-width: 500px; width: 90%; background: white; padding: 50px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); text-align: center; border: 1px solid rgba(143,31,40,0.1); }}
-        h1 {{ font-family: 'Montserrat', sans-serif; color: var(--primary); font-size: 1.8rem; line-height: 1.2; margin-bottom: 20px; }}
-        p {{ line-height: 1.6; opacity: 0.8; margin-bottom: 30px; }}
-        .btn {{ display: inline-block; background: var(--primary); color: white; padding: 20px 45px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: transform 0.3s; }}
-        .btn:hover {{ transform: translateY(-5px); box-shadow: 0 10px 20px rgba(143,31,40,0.2); }}
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>{title}</h1>
-        <p>{excerpt}</p>
-        <a href="{target_url}" class="btn">DISCOVER SECRETS</a>
-    </div>
-</body>
-</html>
-""",
-    "minimal": """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <style>
-        body {{ background: #111; color: #eee; font-family: serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }}
-        .content {{ text-align: center; max-width: 600px; padding: 20px; }}
-        h1 {{ font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 40px; }}
-        .link {{ color: white; text-decoration: none; border-bottom: 2px solid #8f1f28; padding-bottom: 5px; font-size: 1.2rem; font-weight: bold; }}
-    </style>
-</head>
-<body>
-    <div class="content">
-        <h1>{title}</h1>
-        <a href="{target_url}" class="link">READ THE FULL STORY</a>
-    </div>
-</body>
-</html>
-""",
-    "editorial": """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Featured: {title}</title>
-    <style>
-        body {{ font-family: sans-serif; margin: 0; background: #f4f4f4; }}
-        .hero {{ height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 10% 5%; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }}
-        h1 {{ color: white; font-size: 4rem; margin: 0; max-width: 800px; line-height: 1; }}
-        .cta {{ margin-top: 40px; }}
-        .cta a {{ background: white; color: black; padding: 20px 40px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }}
-    </style>
-</head>
-<body>
-    <div class="hero">
-        <h1>{title}</h1>
-        <div class="cta"><a href="{target_url}">Open Article</a></div>
-    </div>
-</body>
-</html>
+WEEKLY_MAGAZINE_CSS = """
+        :root { --primary: #e6dfd9; --accent: #8b2b2b; --text: #1a1a1a; --surface: #ffffff; }
+        body { font-family: 'Georgia', serif; background-color: var(--primary); color: var(--text); margin: 0; padding: 0; }
+        .header { background: var(--surface); padding: 40px 20px; text-align: center; border-bottom: 1px solid #dcd3cb; }
+        .header h1 { margin: 0; font-size: 2.5rem; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+        .header p { color: #666; font-family: sans-serif; letter-spacing: 1px; margin-top: 10px; }
+        .gallery-container { max-width: 1200px; margin: 50px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; }
+        .card { background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(139,43,43,0.15); }
+        .card-img-wrapper { position: relative; width: 100%; padding-top: 133%; overflow: hidden; }
+        .card-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { font-size: 1.4rem; color: var(--text); margin: 0 0 15px 0; line-height: 1.3; }
+        .card-excerpt { color: #555; font-family: sans-serif; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px; flex-grow: 1; }
+        .card-btn { display: inline-block; background-color: var(--accent); color: white; text-align: center; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-family: sans-serif; font-weight: bold; letter-spacing: 1px; transition: background 0.2s; }
+        .card-btn:hover { background-color: #6a1f1f; }
 """
-}
 
 # --- Core Functions ---
 
@@ -167,13 +110,10 @@ def design_pin(image_path, title, output_path):
     
     for line in wrapped_lines:
         w = draw.textlength(line, font=font)
-        # Shadow
         draw.text(((width-w)/2 + 2, y_text + 2), line, font=font, fill=(0,0,0,100))
-        # Main
         draw.text(((width-w)/2, y_text), line, font=font, fill=(255,255,255,255))
         y_text += line_h
         
-    # Floating Branding
     try:
         brand_font = ImageFont.truetype(font_paths[0], int(width * 0.035)) if font else None
         if brand_font:
@@ -184,24 +124,77 @@ def design_pin(image_path, title, output_path):
     
     img.convert("RGB").save(output_path, "JPEG", quality=95)
 
-def create_unique_bridge_page(slug, title, target_url, excerpt):
-    """Generate a unique physical HTML file on GitHub Pages"""
-    template_name = random.choice(list(TEMPLATES.keys()))
-    html_content = TEMPLATES[template_name].format(
-        title=title,
-        excerpt=excerpt,
-        target_url=target_url
-    )
+def update_weekly_magazine(slug, title, target_url, excerpt, image_file_name):
+    """
+    Update or create a robust Weekly Gallery page holding multiple pins.
+    Copies the generated image to assets folder so it displays properly.
+    """
+    now = datetime.datetime.now()
+    week_num = now.isocalendar()[1]
+    year = now.year
+    week_slug = f"edition-{week_num}-{year}"
     
-    # Ensure subdirectory exists
-    subdir = BRIDGE_PAGE_ROOT / "discovery"
-    subdir.mkdir(parents=True, exist_ok=True)
+    discovery_dir = BRIDGE_PAGE_ROOT / "discovery"
+    assets_dir = discovery_dir / "assets"
+    discovery_dir.mkdir(parents=True, exist_ok=True)
+    assets_dir.mkdir(parents=True, exist_ok=True)
     
-    file_path = subdir / f"{slug}.html"
-    file_path.write_text(html_content, encoding="utf-8")
+    # Move the raw image to assets folder to act as the gorgeous thumbnail
+    dest_img_path = assets_dir / f"{slug}.jpg"
+    shutil.copy(image_file_name, dest_img_path)
     
-    print(f"Generated unique bridge page: {file_path} (Style: {template_name})")
-    return f"{BRIDGE_PAGE_URL_BASE}discovery/{slug}.html"
+    html_file = discovery_dir / f"{week_slug}.html"
+    
+    # HTML Card for this pin
+    card_html = f"""
+        <!-- POST: {slug} -->
+        <div class="card" id="{slug}">
+            <div class="card-img-wrapper">
+                <img src="assets/{slug}.jpg" alt="{title}" class="card-img">
+            </div>
+            <div class="card-body">
+                <h2 class="card-title">{title}</h2>
+                <p class="card-excerpt">{excerpt}</p>
+                <a href="{target_url}" class="card-btn">READ FULL RECIPE</a>
+            </div>
+        </div>
+    """
+
+    if not html_file.exists():
+        # Create fresh weekly magazine
+        base_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Mordjene Weekly Finds - Week {week_num}, {year}</title>
+    <style>
+{WEEKLY_MAGAZINE_CSS}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Weekly Edition</h1>
+        <p>Curated Top Trends & Beautiful Recipes • Week {week_num}</p>
+    </div>
+    <div class="gallery-container">
+        <!-- CARDS BEGIN -->
+{card_html}
+        <!-- CARDS END -->
+    </div>
+</body>
+</html>"""
+        html_file.write_text(base_html, encoding="utf-8")
+    else:
+        # Inject card into existing magazine
+        content = html_file.read_text(encoding="utf-8")
+        inject_marker = "<!-- CARDS BEGIN -->"
+        if inject_marker in content:
+            new_content = content.replace(inject_marker, f"{inject_marker}\n{card_html}")
+            html_file.write_text(new_content, encoding="utf-8")
+            
+    # Format the final Pinterest link resolving cleanly to github pages hash
+    return f"{BRIDGE_PAGE_URL_BASE.strip('/')}/discovery/{week_slug}.html#{slug}"
 
 def publish_pin(image_path, title, description, bridge_url, board_id):
     """Push to Pinterest API"""
@@ -237,10 +230,9 @@ def publish_pin(image_path, title, description, bridge_url, board_id):
     return False
 
 def process_new_pin(title, slug, url, description, board_id):
-    """Master flow for generating multiple pins per article (4x multiplier)"""
+    """Master flow for generating multiple pins per article (4x multiplier) -> Weekly Gallery"""
     print(f"--- Unified Flow: {title} (Generating 4 Variations) ---")
     
-    # Four distinct stylistic angles to give Pinterest variation
     angles = [
         "A luxury close-up editorial shot, macro",
         "A beautiful overhead flat-lay photography composition",
@@ -259,20 +251,19 @@ def process_new_pin(title, slug, url, description, board_id):
         # 1. Image Generation
         pin_prompt = f"{angle} of {title}"
         if generate_image(pin_prompt, raw_img):
-            # 2. Design
+            # 2. Design Overlay
             design_pin(raw_img, title, final_img)
             
-            # 3. Unique Bridge Page (Multiple unique pages per article)
-            bridge_url = create_unique_bridge_page(iter_slug, title, url, description)
+            # 3. Weekly Magazine Injection (Host the raw image for the beautiful gallery thumb)
+            bridge_url = update_weekly_magazine(iter_slug, title, url, description, raw_img)
             
             # 4. Pinterest Publish
             if publish_pin(final_img, title, description, bridge_url, board_id):
                 success_count += 1
             
-            # Cleanup
+            # Cleanup local temp files (raw_img was copied to bridge assets folder already)
             if os.path.exists(raw_img): os.remove(raw_img)
-            if os.path.exists(final_img): os.remove(final_img) # clean final too to save space
+            if os.path.exists(final_img): os.remove(final_img)
             
     print(f"--- Completed: {success_count}/4 Pins Published ---")
     return success_count > 0
-
