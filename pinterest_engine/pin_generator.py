@@ -21,7 +21,7 @@ PINTEREST_API_BASE = "https://api.pinterest.com/v5"
 PINTEREST_ACCESS_TOKEN = os.getenv("PINTEREST_ACCESS_TOKEN")
 
 BRIDGE_PAGE_ROOT = Path("bridge_page")
-BRIDGE_PAGE_URL_BASE = os.getenv("BRIDGE_PAGE_URL", "https://drshahidislam.github.io/El-Mordjene-Unified-Bot-/")
+BRIDGE_PAGE_URL_BASE = os.getenv("BRIDGE_PAGE_URL", "https://drshahidislam.github.io/Food-Trends-Blog/")
 
 WEEKLY_MAGAZINE_CSS = """
         :root { --primary: #e6dfd9; --accent: #8b2b2b; --text: #1a1a1a; --surface: #ffffff; }
