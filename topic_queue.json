@@ -2244,11 +2244,13 @@
   {
     "topic": "Creamy Tuscan White Bean and Sausage Soup",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Comfort",
     "seasonal_tag": "Fall Comfort",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/creamy-tuscan-white-bean-and-sausage-soup/",
+    "published_at": "2026-09-09T22:02:16.912297"
   },
   {
     "topic": "One-Pan Maple Dijon Roasted Chicken Thighs and Sweet Potatoes",
