@@ -2210,11 +2210,13 @@
   {
     "topic": "Cozy Brown Butter Apple Cider Donuts with Cinnamon Sugar",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Baking",
     "seasonal_tag": "Fall Baking",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/cozy-brown-butter-apple-cider-donuts/",
+    "published_at": "2026-09-09T12:31:08.108314"
   },
   {
     "topic": "Soft Swirled Pumpkin Cream Cheese Loaf with Spiced Glaze",
