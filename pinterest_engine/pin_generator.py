@@ -74,9 +74,35 @@ def generate_pin_content_with_gemini(topic, pin_index=0):
         if str(root_dir) not in sys.path:
             sys.path.insert(0, str(root_dir))
         from alerts_engine.sources.seasonal_calendar import get_seasonal_pin_context
-        seasonal_context = get_seasonal_pin_context()
+        seasonal_context = get_seasonal_pin_context(topic)
     except Exception:
         pass
+
+    # Dynamic headline frameworks to prevent repetitive titles across pins
+    headline_frameworks = [
+        {
+            "name": "Speed & Weeknight Convenience",
+            "instruction": "Focus on fast prep or cook time and weeknight simplicity (e.g., '20-Minute Crispy [Dish] (Better Than Takeout)', 'Easy 30-Minute [Dish] for Busy Nights', 'Quick One-Pan [Dish] in Under 25 Minutes')."
+        },
+        {
+            "name": "Sensory & Craving Appeal",
+            "instruction": "Focus on mouthwatering sensory texture and flavor details (e.g., 'Extra Gooey [Dish] with [Special Feature]', 'Golden Glazed [Dish] with Crispy Edges', 'Ultra-Creamy [Dish] with Melty [Ingredient]')."
+        },
+        {
+            "name": "Technique & Kitchen Method",
+            "instruction": "Focus on a specific cooking method or smart kitchen hack (e.g., 'The One-Pan Method for Perfect [Dish]', 'The Skillet Trick for Extra Tender [Dish]', 'How to Make Restaurant-Crispy [Dish] at Home')."
+        },
+        {
+            "name": "Occasion & Crowd-Pleaser",
+            "instruction": "Focus on gatherings, game day, cozy autumn evenings, or family favorites (e.g., 'The Ultimate Crowd-Pleaser [Dish] for Game Day', 'Cozy Autumn [Dish] Everyone Will Ask Seconds For', 'The #1 Party [Dish] That Disappears in Minutes')."
+        },
+        {
+            "name": "Effortless / High-Value Result",
+            "instruction": "Focus on few ingredients, no-stress prep, or foolproof results (e.g., '5-Ingredient [Dish] in One Bowl', 'Foolproof [Dish] with Zero Fuss', 'The Only [Dish] Recipe You Will Ever Need')."
+        }
+    ]
+    # Deterministic rotation based on topic hash and pin_index
+    framework = headline_frameworks[(abs(hash(topic)) + pin_index) % len(headline_frameworks)]
 
     prompt = f"""
     You are a top-tier viral Pinterest marketing expert. Your task is to generate high-performance content for Pin #{pin_index + 1} about: "{topic}".
@@ -85,24 +111,29 @@ def generate_pin_content_with_gemini(topic, pin_index=0):
     
     Adhere strictly to these targeted angle guidelines for this pin variation:
     {angle_instruction}
+
+    TARGET HEADLINE ARCHETYPE FOR THIS PIN:
+    - Style: {framework['name']}
+    - Guidance: {framework['instruction']}
     
-    Reverse-engineering rules from the Quiet 27-Blog strategy:
-    1. Identify 3 highly specific 'Pinterest Annotated Keywords' that real users type into the Pinterest search bar.
-    2. Create a Title (max 100 chars). It MUST name the specific audience identity (e.g., "for beginners", "women over 40", "busy moms"). It MUST create a curiosity gap (e.g., "The Secret Ingredient for..."). NO generic phrases like "amazing" or "beautiful".
-    3. Create a Description (Exactly 50-75 words). Tone must be warm and conversational, like a knowledgeable friend. Naturally weave in 4-6 related search phrases into real sentences. NO HASHTAGS (they are algorithm-negative). End with a soft CTA (e.g., "Save this for your next dinner").
-    4. Create an accessibility and search-optimized Alt Text (150-300 chars) strictly describing visual food details.
-    5. Create a HYPER-REALISTIC Image Prompt (400-600 chars). It MUST explicitly state "NO TEXT IN THE IMAGE".
-    6. Create a secondary complementary Image Prompt (400-600 chars) focusing on: "{secondary_angle_focus}". MUST explicitly state "NO TEXT IN THE IMAGE".
-    7. Generate accurate, structured recipe data for Pinterest Recipe Rich Pins (prep/cook times in minutes, servings, exact ingredient quantities, and step-by-step instructions).
+    CRITICAL TITLE & HOOK DIVERSITY RULES (REVERSE-ENGINEERED PINTEREST STRATEGY):
+    1. STRICTLY FORBIDDEN: DO NOT start titles with audience colon prefixes like "Busy Moms:", "For Busy Moms:", "For Beginners:", "For Home Cooks:", or "For Busy Professionals:".
+    2. STRICTLY FORBIDDEN: DO NOT use cliché formulas like "The Secret Ingredient for...", "The Secret Shortcut to...", "The Secret Technique for...", or "The Secret Restaurant Method for...".
+    3. Make the Title completely unique, compelling, human-sounding, and under 100 characters. It MUST prominently include the dish name.
+    4. Hook (text overlay): MUST be 3-5 punchy words directly highlighting this exact dish's distinct appeal (e.g., 'READY IN 20 MINS', 'EXTRA CHEESY PULL', 'CRISPY & GOLDEN', 'RICH & VELVETY COMFORT', 'MELT-IN-YOUR-MOUTH'). DO NOT use a generic hook like 'THE ULTIMATE COZY FALL DINNER' for every pin.
+    5. Description (Exactly 50-75 words): Warm, conversational, sensory tone. Weave in 4-6 natural search phrases. Rotate opening styles: do NOT always start with "Looking for..." or "Craving the ultimate...". End with a soft CTA (e.g., "Save this recipe for dinner!"). NO HASHTAGS.
+    6. Alt Text (150-300 chars): High-detail visual food description for accessibility & SEO.
+    7. Image Prompts (400-600 chars each): Hyper-realistic food photography. MUST explicitly state "NO TEXT IN THE IMAGE".
+    8. Accurate Recipe Data: Prep/cook minutes, yield, full ingredient list with measurements, and clear instructions.
     
     Return ONLY valid JSON:
     {{
       "annotated_keywords": ["keyword1", "keyword2", "keyword3"],
-      "title": "Audience Identity: Curiosity Gap Hook",
+      "title": "Unique Compelling Title Matching The Selected Framework (Under 100 chars)",
       "description": "50-75 word sensory description ending in soft Save CTA. NO HASHTAGS...",
       "alt_text": "Descriptive visual alt text...",
       "recipe_name": "CLEAN RECIPE NAME (max 4 words, all caps)",
-      "hook": "3-6 WORD OVERLAY (identity/result language, e.g., 'For Picky Eaters', '5-Minute Prep')",
+      "hook": "3-5 WORD UNIQUE OVERLAY (e.g., 'EXTRA CRISPY & TENDER')",
       "image_prompt": "Primary visual focus photography prompt. NO TEXT...",
       "secondary_image_prompt": "Secondary visual focus photography prompt. NO TEXT...",
       "prep_time_minutes": 10,

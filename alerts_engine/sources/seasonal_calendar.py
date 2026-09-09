@@ -184,13 +184,22 @@ def get_active_seasonal_themes(target_date=None):
     return themes
 
 
-def get_seasonal_pin_context():
+def get_seasonal_pin_context(topic=""):
     """
     Get a formatted prompt snippet to guide Gemini when generating pin hooks, titles, and images.
+    Matches active theme according to topic keywords when available.
     """
     themes = get_active_seasonal_themes()
-    primary = themes[0]
+    if not themes:
+        return ""
     
+    primary = themes[0]
+    t_lower = (topic or "").lower()
+    for theme in themes:
+        if any(kw in t_lower for kw in theme.get("keywords", [])):
+            primary = theme
+            break
+
     hooks_str = ", ".join(f"'{h}'" for h in primary.get("hook_templates", []))
     keywords_str = ", ".join(primary.get("keywords", []))
 
@@ -199,8 +208,8 @@ def get_seasonal_pin_context():
     - Active Season / Festivity: {primary['name']} ({primary['tag']})
     - Key Search Concepts: {keywords_str}
     - Visual Photography Mood: {primary['mood']}
-    - High-CTR Seasonal Hook Angles to leverage: {hooks_str}
-    *RULE: If the recipe matches fall, comfort, holiday, or game day themes, prioritize seasonal urgency and sensory cravings in the title, description, and hook!*
+    - High-CTR Seasonal Hook Angles (use as inspiration, DO NOT copy verbatim on every pin): {hooks_str}
+    *RULE: If the recipe matches fall, comfort, holiday, or game day themes, prioritize seasonal urgency and sensory cravings, but customize specifically to this dish!*
     """
 
 
