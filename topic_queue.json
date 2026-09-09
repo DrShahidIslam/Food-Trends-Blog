@@ -2232,11 +2232,13 @@
   {
     "topic": "Crispy Skillet Apple Crisp with Salted Caramel Drizzle",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Baking",
     "seasonal_tag": "Fall Baking",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/crispy-skillet-apple-crisp-salted-caramel-drizzle/",
+    "published_at": "2026-09-09T19:02:32.465075"
   },
   {
     "topic": "Creamy Tuscan White Bean and Sausage Soup",
