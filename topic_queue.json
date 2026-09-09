@@ -2221,11 +2221,13 @@
   {
     "topic": "Soft Swirled Pumpkin Cream Cheese Loaf with Spiced Glaze",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Baking",
     "seasonal_tag": "Fall Baking",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/soft-swirled-pumpkin-cream-cheese-loaf-spiced-glaze/",
+    "published_at": "2026-09-09T19:00:37.007722"
   },
   {
     "topic": "Crispy Skillet Apple Crisp with Salted Caramel Drizzle",
