@@ -2258,11 +2258,13 @@
   {
     "topic": "One-Pan Maple Dijon Roasted Chicken Thighs and Sweet Potatoes",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Comfort",
     "seasonal_tag": "Fall Comfort",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/one-pan-maple-dijon-roasted-chicken-thighs-sweet-potatoes/",
+    "published_at": "2026-09-10T12:24:58.571289"
   },
   {
     "topic": "Fudgy Pumpkin Spice Swirl Brownies",
