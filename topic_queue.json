@@ -2297,11 +2297,13 @@
   {
     "topic": "Slow Cooker Buffalo Chicken Dip with Crispy Tortilla Chips",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/slow-cooker-buffalo-chicken-dip-with-crispy-tortilla-chips/",
+    "published_at": "2026-09-11T22:03:14.473863"
   },
   {
     "topic": "Cheesy Hot Roast Beef and Cheddar Hawaiian Roll Sliders",
