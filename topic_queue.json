@@ -2285,11 +2285,13 @@
   {
     "topic": "Slow Cooker Cheesy Crack Chicken Tater Tot Casserole",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Fall Comfort",
     "seasonal_tag": "Fall Comfort",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/slow-cooker-cheesy-crack-chicken-tater-tot-casserole/",
+    "published_at": "2026-09-11T12:23:47.685529"
   },
   {
     "topic": "Slow Cooker Buffalo Chicken Dip with Crispy Tortilla Chips",
