@@ -2309,11 +2309,13 @@
   {
     "topic": "Cheesy Hot Roast Beef and Cheddar Hawaiian Roll Sliders",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/cheesy-hot-roast-beef-and-cheddar-hawaiian-roll-sliders/",
+    "published_at": "2026-09-12T11:45:23.852975"
   },
   {
     "topic": "Crispy Air Fryer Garlic Parmesan Wings with Ranch Dip",
