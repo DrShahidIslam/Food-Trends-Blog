@@ -2325,16 +2325,18 @@
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "Baked Jalape\u00f1o Popper Dip with Bacon Breadcrumb Crust",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/baked-jalapeno-popper-dip-with-bacon-breadcrumb-crust/",
+    "published_at": "2026-09-12T21:45:18.165017"
   },
   {
     "topic": "Sheet Pan Loaded Cheesy Taco Nachos with Fresh Guacamole",
