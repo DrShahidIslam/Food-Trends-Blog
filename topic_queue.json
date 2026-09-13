@@ -2345,11 +2345,13 @@
   {
     "topic": "Sheet Pan Loaded Cheesy Taco Nachos with Fresh Guacamole",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/sheet-pan-loaded-cheesy-taco-nachos-fresh-guacamole/",
+    "published_at": "2026-09-13T21:51:16.072273"
   },
   {
     "topic": "Cheesy Garlic Herb Pull-Apart Sourdough Bread",
