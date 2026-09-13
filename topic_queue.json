@@ -2321,11 +2321,13 @@
   {
     "topic": "Crispy Air Fryer Garlic Parmesan Wings with Ranch Dip",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 1
+    "retries": 1,
+    "wp_url": "https://el-mordjene.info/crispy-air-fryer-garlic-parmesan-wings/",
+    "published_at": "2026-09-13T12:53:09.149026"
   },
   {
     "topic": "Baked Jalape\u00f1o Popper Dip with Bacon Breadcrumb Crust",
