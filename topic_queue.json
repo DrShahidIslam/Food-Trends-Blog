@@ -2357,11 +2357,13 @@
   {
     "topic": "Cheesy Garlic Herb Pull-Apart Sourdough Bread",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/cheesy-garlic-herb-pull-apart-sourdough-bread/",
+    "published_at": "2026-09-14T14:28:09.403554"
   },
   {
     "topic": "Sweet and Spicy Slow Cooker BBQ Meatballs",
