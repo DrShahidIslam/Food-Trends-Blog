@@ -2369,11 +2369,13 @@
   {
     "topic": "Sweet and Spicy Slow Cooker BBQ Meatballs",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Game Day",
     "seasonal_tag": "Game Day",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/sweet-and-spicy-slow-cooker-bbq-meatballs/",
+    "published_at": "2026-09-14T22:48:08.210763"
   },
   {
     "topic": "Spooky Ghost Meringue Cupcakes with Rich Chocolate Base",
