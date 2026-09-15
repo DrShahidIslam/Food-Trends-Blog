@@ -2381,11 +2381,13 @@
   {
     "topic": "Spooky Ghost Meringue Cupcakes with Rich Chocolate Base",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Halloween",
     "seasonal_tag": "Halloween",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/spooky-ghost-meringue-cupcakes-rich-chocolate-base/",
+    "published_at": "2026-09-15T12:56:10.129337"
   },
   {
     "topic": "Crescent Roll Mummy Jalape\u00f1o Poppers with Cream Cheese",
