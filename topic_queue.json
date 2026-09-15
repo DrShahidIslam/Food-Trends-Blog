@@ -2393,11 +2393,13 @@
   {
     "topic": "Crescent Roll Mummy Jalape\u00f1o Poppers with Cream Cheese",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Halloween",
     "seasonal_tag": "Halloween",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/crescent-roll-mummy-jalapeno-poppers-with-cream-cheese/",
+    "published_at": "2026-09-15T22:29:14.565527"
   },
   {
     "topic": "Fudgy Halloween Graveyard Brownies with Cookie Tombstones",
