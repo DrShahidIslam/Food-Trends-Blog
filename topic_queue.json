@@ -2417,11 +2417,13 @@
   {
     "topic": "Chewy Monster Eyeball Chocolate Chip Cookies",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Halloween",
     "seasonal_tag": "Halloween",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/chewy-monster-eyeball-chocolate-chip-cookies/",
+    "published_at": "2026-09-16T22:27:11.677311"
   },
   {
     "topic": "Warm Spooky Apple Cider Witch's Brew Mocktail",
