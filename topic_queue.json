@@ -2429,11 +2429,13 @@
   {
     "topic": "Warm Spooky Apple Cider Witch's Brew Mocktail",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Halloween",
     "seasonal_tag": "Halloween",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/warm-spooky-apple-cider-witchs-brew-mocktail/",
+    "published_at": "2026-09-17T12:49:01.326066"
   },
   {
     "topic": "Creamy Spooky Pumpkin Cheesecake Dip with Ginger Snaps",
