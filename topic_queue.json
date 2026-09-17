@@ -2441,11 +2441,13 @@
   {
     "topic": "Creamy Spooky Pumpkin Cheesecake Dip with Ginger Snaps",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Halloween",
     "seasonal_tag": "Halloween",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/creamy-spooky-pumpkin-cheesecake-dip-with-ginger-snaps/",
+    "published_at": "2026-09-17T22:29:42.316327"
   },
   {
     "topic": "Brown Sugar Pecan Crunch Sweet Potato Casserole",
