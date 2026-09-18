@@ -2476,11 +2476,13 @@
   {
     "topic": "Creamy Cheddar Green Bean Casserole with Crispy Fried Onions",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Thanksgiving",
     "seasonal_tag": "Thanksgiving",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/creamy-cheddar-green-bean-casserole-crispy-fried-onions/",
+    "published_at": "2026-09-18T21:59:04.897345"
   },
   {
     "topic": "Warm Baked Cranberry Pecan Brie Bites with Flaky Pastry",
