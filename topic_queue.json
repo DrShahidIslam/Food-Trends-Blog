@@ -2453,11 +2453,13 @@
   {
     "topic": "Brown Sugar Pecan Crunch Sweet Potato Casserole",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Thanksgiving",
     "seasonal_tag": "Thanksgiving",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/brown-sugar-pecan-crunch-sweet-potato-casserole/",
+    "published_at": "2026-09-18T12:24:38.854693"
   },
   {
     "topic": "Classic Herb Sausage and Sourdough Stuffing from Scratch",
