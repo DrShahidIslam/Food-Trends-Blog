@@ -1104,33 +1104,75 @@ def _save_pin_log(log):
     with open(log_path, "w") as f: json.dump(log, f, indent=2)
 
 def run_pin_worker():
-    """Pick a topic from queue that needs pins (1:3 ratio) and publish 1 pin."""
+    """Pick a topic from queue that needs pins (up to 3 distinct variations) prioritizing active seasonal trends, with strict 20-day cooldown."""
     queue = _load_queue()
     pin_log = _load_pin_log()
     
-    # 7-day cooldown (168 hours)
-    cooldown_seconds = 7 * 24 * 3600
+    # Strict 20-day cooldown (480 hours) between pins for the same destination URL
+    cooldown_seconds = 20 * 24 * 3600
     now = datetime.datetime.now().timestamp()
     
-    # Filter: WP is done and needs more pins, AND URL is not in 7-day cooldown, AND topic is not excluded
+    # Dynamically extract active seasonal keywords from calendar
+    try:
+        import sys
+        if str(root_dir) not in sys.path:
+            sys.path.insert(0, str(root_dir))
+        from alerts_engine.sources.seasonal_calendar import get_active_seasonal_themes
+        active_themes = get_active_seasonal_themes()
+        seasonal_keywords = set()
+        for th in active_themes:
+            for kw in th.get("keywords", []):
+                seasonal_keywords.add(kw.lower())
+    except Exception:
+        seasonal_keywords = set()
+
+    # Filter: WP is done, has fewer than 3 pin variations, URL not in 20-day cooldown, and topic is not excluded
     EXCLUDED_TOPIC_KEYWORDS = ["mordjene", "el-mordjene", "el mordjene", "cebon", "hazelnut spread", "algerian spread"]
-    target = None
+    eligible = []
     for t in queue:
         topic_title = t.get("topic", "").lower()
-        url_path = t.get("wp_url", "").replace("https://el-mordjene.info/", "").lower()
+        url = t.get("wp_url", "")
+        url_path = url.replace("https://el-mordjene.info/", "").lower()
         if any(ex in topic_title or ex in url_path for ex in EXCLUDED_TOPIC_KEYWORDS):
             continue
 
-        if t.get("wp_status") == "done" and t.get("pin_count", 0) < 1:
-            url = t.get("wp_url", "")
+        if t.get("wp_status") == "done" and t.get("pin_count", 0) < 3:
             last_pinned = pin_log.get(url, 0)
             if now - last_pinned >= cooldown_seconds:
-                target = t
-                break
+                eligible.append(t)
     
-    if not target:
-        print("No topics in queue waiting for pins.")
+    if not eligible:
+        print("No topics in queue currently eligible for pins (all within 20-day cooldown or max pins reached).")
         return
+
+    # Prioritize: 
+    # 1. Active seasonal/festivity keywords (Fall Comfort, Game Day, Halloween, Thanksgiving, etc.)
+    # 2. Fresh unpinned topics (pin_count == 0 prioritized over repins)
+    # 3. Injected queue priority (priority 1 topics)
+    import re
+    def topic_priority_score(item):
+        title_lower = item.get("topic", "").lower()
+        score = 0
+        # Check active seasonal keywords with word boundary matching
+        is_seasonal = any(re.search(r"\b" + re.escape(kw) + r"\b", title_lower) for kw in seasonal_keywords)
+        if is_seasonal:
+            score += 150
+        # Fresh unpinned topic priority
+        p_count = item.get("pin_count", 0)
+        if p_count == 0:
+            score += 100
+        else:
+            score += (3 - p_count) * 15
+        # Injected priority bonus
+        if item.get("priority", 99) == 1:
+            score += 50
+        # Break ties by age since last pinned (older first)
+        last_pinned = pin_log.get(item.get("wp_url", ""), 0)
+        score -= (last_pinned / 1e10)
+        return score
+
+    eligible.sort(key=topic_priority_score, reverse=True)
+    target = eligible[0]
 
     title = target["topic"]
     url = target.get("wp_url", "")
@@ -1141,7 +1183,8 @@ def run_pin_worker():
     description = f"Check out this amazing {title} recipe and guide on el-mordjene.info!"
     pin_index = target.get("pin_count", 0)
     
-    print(f"--- PIN WORKER: Processing '{title}' (Pin {pin_index + 1}/1) ---")
+    is_seasonal = any(kw in title.lower() for kw in seasonal_keywords)
+    print(f"--- PIN WORKER: Processing '{title}' (Pin {pin_index + 1}/3, Seasonal: {is_seasonal}) ---")
     
     # Rotate angles based on which pin we are on
     angles = [
