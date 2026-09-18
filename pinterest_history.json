@@ -11,5 +11,18 @@
     "outbound_ctr": 1.48,
     "save_rate": 0.45,
     "save_to_click_ratio": 15.96
+  },
+  {
+    "date": "2026-09-18",
+    "start_date": "2026-08-17",
+    "end_date": "2026-09-16",
+    "impressions": 6240,
+    "pin_clicks": 178,
+    "outbound_clicks": 73,
+    "saves": 44,
+    "pin_ctr": 2.85,
+    "outbound_ctr": 1.17,
+    "save_rate": 0.71,
+    "save_to_click_ratio": 24.72
   }
 ]
