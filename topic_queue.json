@@ -2500,11 +2500,13 @@
   {
     "topic": "Mile-High Classic Southern Pecan Pie with Flaky Butter Crust",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Thanksgiving",
     "seasonal_tag": "Thanksgiving",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/mile-high-classic-southern-pecan-pie-flaky-butter-crust/",
+    "published_at": "2026-09-19T21:49:27.959987"
   },
   {
     "topic": "Fluffy Japanese Souffl\u00e9 Pancakes from Scratch",
