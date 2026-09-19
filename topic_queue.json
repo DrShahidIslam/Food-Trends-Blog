@@ -2488,11 +2488,13 @@
   {
     "topic": "Warm Baked Cranberry Pecan Brie Bites with Flaky Pastry",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "done",
     "priority": 1,
     "source": "Seasonal Trend: Thanksgiving",
     "seasonal_tag": "Thanksgiving",
-    "retries": 0
+    "retries": 0,
+    "wp_url": "https://el-mordjene.info/warm-baked-cranberry-pecan-brie-bites-flaky-pastry/",
+    "published_at": "2026-09-19T12:05:48.799521"
   },
   {
     "topic": "Mile-High Classic Southern Pecan Pie with Flaky Butter Crust",
