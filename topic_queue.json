@@ -2683,13 +2683,14 @@
   {
     "topic": "Chewy Espresso Chocolate Brownie Cookies",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/chewy-espresso-chocolate-brownie-cookies/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 0,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-09-21T22:53:04.351501"
   },
   {
     "topic": "Mini Key Lime Pie Tarts with Graham Cracker Crust",
