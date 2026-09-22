@@ -2762,13 +2762,14 @@
   {
     "topic": "Cinnamon Roll Monkey Bread with Cream Cheese Icing",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/cinnamon-roll-monkey-bread-with-cream-cheese-icing/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 0,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-09-22T22:27:55.388843"
   },
   {
     "topic": "Homemade Churro Waffles with Cinnamon Sugar",
