@@ -3188,13 +3188,14 @@
   {
     "topic": "Slow Cooker Apple Butter with Warm Spices",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/slow-cooker-apple-butter-with-warm-spices/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 0,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-09-26T22:14:59.582144"
   },
   {
     "topic": "Creamy Tuscan White Bean and Sausage Stew",
