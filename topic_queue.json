@@ -3200,13 +3200,14 @@
   {
     "topic": "Creamy Tuscan White Bean and Sausage Stew",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/creamy-tuscan-white-bean-and-sausage-stew/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 0,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-09-27T22:38:18.469680"
   },
   {
     "topic": "Loaded Baked Potato Soup with Cheddar and Crispy Bacon",
