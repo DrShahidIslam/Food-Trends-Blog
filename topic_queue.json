@@ -3332,13 +3332,14 @@
   {
     "topic": "Cozy Chicken and Wild Rice Soup",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/cozy-chicken-and-wild-rice-soup/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-02T23:20:31.722669"
   },
   {
     "topic": "Spiced Apple Cinnamon Hand Pies",
