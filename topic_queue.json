@@ -3611,13 +3611,14 @@
   {
     "topic": "Crispy Air Fryer Pizza Rolls with Garlic Butter",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/crispy-air-fryer-pizza-rolls-with-garlic-butter/",
     "pin_count": 0,
     "priority": 1,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-04T22:34:57.399290"
   },
   {
     "topic": "Strawberry Acai Lemonade Refresher",
