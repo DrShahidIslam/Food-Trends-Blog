@@ -2597,13 +2597,14 @@
   {
     "topic": "Creamy Basque Burnt Cheesecake with Berry Compote",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/creamy-basque-burnt-cheesecake-berry-compote/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-07T14:49:09.622873"
   },
   {
     "topic": "Crispy Cinnamon Sugar Churro Bites with Chocolate Dip",
