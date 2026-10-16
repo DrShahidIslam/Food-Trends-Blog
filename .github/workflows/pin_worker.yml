@@ -50,12 +50,21 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add topic_queue.json index.html bridge_page/ || true
-          if [ -f pinterest_auth.json ]; then git add -f pinterest_auth.json; fi
-          if [ -f pinterest_history.json ]; then git add -f pinterest_history.json; fi
-          if [ -f pinterest_engine/pin_log.json ]; then git add -f pinterest_engine/pin_log.json; fi
+          if [ -f pinterest_history.json ]; then git add pinterest_history.json; fi
+          if [ -f pinterest_engine/pin_log.json ]; then git add pinterest_engine/pin_log.json; fi
           git commit -m "Automation: Update pin counts and bridge site [skip ci]" || echo "No changes to commit"
+          pushed=0
           for i in 1 2 3 4 5; do
             git fetch origin main
             git rebase -X theirs origin/main || (git rebase --abort && git pull --no-rebase -s ort -X ours origin main -m "Merge remote changes")
-            git push origin main && echo "Successfully pushed changes!" && break || sleep 3
+            if git push origin main; then
+              echo "Successfully pushed changes!"
+              pushed=1
+              break
+            fi
+            sleep 3
           done
+          if [ $pushed -ne 1 ]; then
+            echo "ERROR: Failed to push changes after 5 attempts!"
+            exit 1
+          fi

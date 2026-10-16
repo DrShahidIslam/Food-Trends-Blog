@@ -23,6 +23,7 @@ pinterest_auth.json
 *.json
 !topic_queue.json
 !pinterest_history.json
+!pinterest_engine/pin_log.json
 !alerts_engine/published_posts.json
 !alerts_engine/indexed_state.json
 
