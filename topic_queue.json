@@ -2982,13 +2982,14 @@
   {
     "topic": "Crispy Baked Falafel Bowl with Tahini Herb Sauce",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/crispy-baked-falafel-bowl-with-tahini-herb-sauce/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-18T21:58:37.889656"
   },
   {
     "topic": "High-Protein Cottage Cheese Pancakes with Fresh Berries",
