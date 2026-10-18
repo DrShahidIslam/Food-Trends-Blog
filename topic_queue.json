@@ -2970,13 +2970,14 @@
   {
     "topic": "Chipotle Grilled Chicken Burrito Bowl with Cilantro Lime Brown Rice",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/chipotle-grilled-chicken-burrito-bowl-cilantro-lime-brown-rice/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-18T12:13:37.588444"
   },
   {
     "topic": "Crispy Baked Falafel Bowl with Tahini Herb Sauce",
