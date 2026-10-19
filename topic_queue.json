@@ -2994,13 +2994,14 @@
   {
     "topic": "High-Protein Cottage Cheese Pancakes with Fresh Berries",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/high-protein-cottage-cheese-pancakes-fresh-berries/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 2,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-19T23:11:26.904150"
   },
   {
     "topic": "Avocado Green Smoothie Bowl with Chia Seeds and Almond Butter",
