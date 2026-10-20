@@ -3006,13 +3006,14 @@
   {
     "topic": "Avocado Green Smoothie Bowl with Chia Seeds and Almond Butter",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/avocado-green-smoothie-bowl-with-chia-seeds-and-almond-butter/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 2,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-10-20T13:05:07.448983"
   },
   {
     "topic": "Vietnamese Noodle Salad with Grilled Lemongrass Chicken",
