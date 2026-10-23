@@ -3727,5 +3727,15 @@
     "priority": 20,
     "source": "Auto-Pilot",
     "published_at": "2026-10-23T12:55:00.938281"
+  },
+  {
+    "topic": "What is a dot cake? The viral dessert taking the internet by storm - Nine.com.au",
+    "intent": "trend",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/what-is-a-dot-cake-viral-dessert/",
+    "pin_count": 0,
+    "priority": 20,
+    "source": "Auto-Pilot",
+    "published_at": "2026-10-23T22:42:36.080616"
   }
 ]
