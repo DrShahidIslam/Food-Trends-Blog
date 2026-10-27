@@ -3788,7 +3788,7 @@
     "pin_count": 0,
     "priority": 5,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "Christmas Baking: Cookies, Cakes and Edible Gifts",
@@ -3798,7 +3798,7 @@
     "pin_count": 0,
     "priority": 6,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
@@ -3808,7 +3808,7 @@
     "pin_count": 0,
     "priority": 7,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
@@ -3818,17 +3818,18 @@
     "pin_count": 0,
     "priority": 8,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "Low Calorie Dinners: Easy Weeknight Recipes Under 500 Calories",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/easy-lemon-garlic-sheet-pan-chicken/",
     "pin_count": 0,
     "priority": 9,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-27T13:43:18.352600"
   },
   {
     "topic": "Dinner Ideas Easy: Lazy Weeknight Dinners That Actually Work",
