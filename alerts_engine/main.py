@@ -19,6 +19,10 @@ from database.db import (
     is_topic_already_covered
 )
 from writer.article_generator import generate_article
+try:
+    from writer.quality_gate import run_el_quality_gate
+except ImportError:
+    run_el_quality_gate = None
 from publisher.wordpress_client import (
     create_post, test_wordpress_connection
 )
@@ -104,6 +108,20 @@ def auto_pilot_process(topic, state):
     except Exception as e:
         logger.error(f"Auto-Pilot generation error: {e}")
         return False
+
+    # 1b. Quality gate (fail-closed): do not publish thin / unlinked / lowercase-title articles
+    if run_el_quality_gate is not None:
+        try:
+            passed, gate_failures, gate_warnings = run_el_quality_gate(article)
+        except Exception as e:
+            logger.warning(f"Quality gate error (publishing anyway): {e}")
+            passed, gate_failures, gate_warnings = True, [], []
+        for w in gate_warnings:
+            logger.warning(f"Quality gate warning: {w}")
+        if not passed:
+            for f in gate_failures:
+                logger.error(f"Quality gate FAILED: {f}")
+            return False
 
     # 2. Generate Image
     image_path = None
