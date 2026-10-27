@@ -3752,12 +3752,13 @@
   {
     "topic": "Dump-and-Go Crockpot Dinners for Busy Weeknights",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/dump-and-go-crockpot-dinners-busy-weeknights/",
     "pin_count": 0,
     "priority": 2,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-27T05:44:34.000627"
   },
   {
     "topic": "Crockpot Chili: The Easiest Fall Slow Cooker Recipe",
