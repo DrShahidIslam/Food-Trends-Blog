@@ -3767,18 +3767,18 @@
     "pin_count": 0,
     "priority": 3,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0,
-    "published_at": "2026-10-27T05:47:02.063723"
+    "retries": 1
   },
   {
     "topic": "Crockpot Hot Chocolate for Christmas",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/crockpot-hot-chocolate-for-christmas/",
     "pin_count": 0,
     "priority": 4,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-27T05:47:50.250976"
   },
   {
     "topic": "Thanksgiving Recipes: Appetizers, Sides and Dinner Ideas",
