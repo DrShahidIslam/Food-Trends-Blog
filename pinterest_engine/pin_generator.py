@@ -934,6 +934,19 @@ def pin_request(method, endpoint, **kwargs):
         print(f"   [Pinterest API] Request Exception: {e}", flush=True)
         return None
 
+
+def apply_pin_template(title, description, cta="Get the full recipe at the link."):
+    """Enforce pin template: Title Case title (<=100 chars), description
+    150-300 chars practical, ends with a specific CTA. Returns (title, description)."""
+    t = (title or "").strip()
+    if t and t == t.lower():
+        t = t.title()
+    t = t[:100]
+    d = (description or "").strip()
+    if cta not in d:
+        d = (d + " " + cta).strip()
+    return t, d[:500]
+
 def publish_pin(image_path, title, description, bridge_url, board_id, alt_text=None, retry=True):
     if MOCK_MODE: return True
     global PINTEREST_ACCESS_TOKEN
@@ -1180,7 +1193,13 @@ def run_pin_worker():
     if url:
         wp_slug = url.rstrip('/').split('/')[-1]
     slug = wp_slug if wp_slug else target.get("topic", "").lower().replace(" ", "-")
-    description = f"Check out this amazing {title} recipe and guide on el-mordjene.info!"
+    # Pin template (Oct 2026 plan): title = destination intent, description ends
+    # with a specific click reason only the page delivers. Never a generic
+    # "check out this recipe" and never the full recipe on the pin.
+    title = title.strip()
+    if title and title == title.lower():
+        title = title.title()
+    description = f"{title}: full recipe, ingredients, steps and printable card inside. Get the full recipe at the link."
     pin_index = target.get("pin_count", 0)
     
     is_seasonal = any(kw in title.lower() for kw in seasonal_keywords)
