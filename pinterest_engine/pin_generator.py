@@ -1257,7 +1257,21 @@ def run_pin_worker():
         board_key = "trend"
     
     selected_board = board_mapping[board_key]
-    
+    # NEW BOARDS (Oct 2026, created by Shahid in Pinterest): resolve by exact
+    # board NAME via the Pinterest API — numeric IDs are not shown in
+    # Pinterest's UI, so never hardcode a guessed ID. Fall back to the
+    # existing board if name resolution returns None.
+    if any(k in t_lower for k in ["slow cooker", "crockpot"]):
+        _resolved = get_board_id("Slow Cooker Recipes")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Slow Cooker Recipes -> {_resolved}")
+    elif any(k in t_lower for k in ["thanksgiving", "christmas", "holiday"]):
+        _resolved = get_board_id("Thanksgiving & Holiday Table")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Thanksgiving & Holiday Table -> {_resolved}")
+
     if not image_prompt:
         image_prompt = f"{angle} of {title}"
 
