@@ -211,6 +211,9 @@ def run_scan(state):
             time.sleep(10)
         conn.close()
 
+    if not pending:
+        logger.error("PENDING=0 ALERT: topic_queue.json has no pending topics — publisher ran empty. Refill the queue from the Semrush+Trends gate log before the next run.")
+
     # 2. Aggregated Discovery (RSS, NewsAPI, Google Trends, Pinterest)
     if published_count < max_per_run:
         logger.info(f"Queue empty or limit not reached. Running aggregated discovery... ({published_count}/{max_per_run})")

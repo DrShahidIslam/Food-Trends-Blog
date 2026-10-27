@@ -3737,5 +3737,115 @@
     "priority": 20,
     "source": "Auto-Pilot",
     "published_at": "2026-10-23T22:42:36.080616"
+  },
+  {
+    "topic": "Slow Cooker Chicken Recipes: Easy Dump-and-Go Dinners",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 1,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Dump-and-Go Crockpot Dinners for Busy Weeknights",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 2,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Crockpot Chili: The Easiest Fall Slow Cooker Recipe",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 3,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Crockpot Hot Chocolate for Christmas",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 4,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Thanksgiving Recipes: Appetizers, Sides and Dinner Ideas",
+    "intent": "trend",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 5,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Christmas Baking: Cookies, Cakes and Edible Gifts",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 6,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
+    "intent": "trend",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 7,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 8,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Low Calorie Dinners: Easy Weeknight Recipes Under 500 Calories",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 9,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Dinner Ideas Easy: Lazy Weeknight Dinners That Actually Work",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 10,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
+  },
+  {
+    "topic": "Salads Recipes: Fresh, Easy Salads for Every Season",
+    "intent": "recipe",
+    "wp_status": "pending",
+    "wp_url": "",
+    "pin_count": 0,
+    "priority": 11,
+    "source": "Semrush+Trends gate Oct 2026",
+    "retries": 0
   }
 ]
