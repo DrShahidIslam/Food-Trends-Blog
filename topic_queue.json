@@ -3788,7 +3788,7 @@
     "pin_count": 0,
     "priority": 5,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   },
   {
     "topic": "Christmas Baking: Cookies, Cakes and Edible Gifts",
@@ -3798,7 +3798,7 @@
     "pin_count": 0,
     "priority": 6,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   },
   {
     "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
@@ -3808,7 +3808,7 @@
     "pin_count": 0,
     "priority": 7,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   },
   {
     "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
@@ -3818,7 +3818,7 @@
     "pin_count": 0,
     "priority": 8,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   },
   {
     "topic": "Low Calorie Dinners: Easy Weeknight Recipes Under 500 Calories",
@@ -3839,7 +3839,7 @@
     "pin_count": 0,
     "priority": 10,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   },
   {
     "topic": "Salads Recipes: Fresh, Easy Salads for Every Season",
@@ -3849,6 +3849,6 @@
     "pin_count": 0,
     "priority": 11,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 1
   }
 ]
