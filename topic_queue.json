@@ -3783,42 +3783,42 @@
   {
     "topic": "Thanksgiving Recipes: Appetizers, Sides and Dinner Ideas",
     "intent": "trend",
-    "wp_status": "pending",
+    "wp_status": "failed",
     "wp_url": "",
     "pin_count": 0,
     "priority": 5,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 2
+    "retries": 3
   },
   {
     "topic": "Christmas Baking: Cookies, Cakes and Edible Gifts",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "failed",
     "wp_url": "",
     "pin_count": 0,
     "priority": 6,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 2
+    "retries": 3
   },
   {
     "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
     "intent": "trend",
-    "wp_status": "pending",
+    "wp_status": "failed",
     "wp_url": "",
     "pin_count": 0,
     "priority": 7,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 2
+    "retries": 3
   },
   {
     "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
     "intent": "recipe",
-    "wp_status": "pending",
+    "wp_status": "failed",
     "wp_url": "",
     "pin_count": 0,
     "priority": 8,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 2
+    "retries": 3
   },
   {
     "topic": "Low Calorie Dinners: Easy Weeknight Recipes Under 500 Calories",
@@ -3839,7 +3839,7 @@
     "pin_count": 0,
     "priority": 10,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   },
   {
     "topic": "Salads Recipes: Fresh, Easy Salads for Every Season",
@@ -3849,6 +3849,6 @@
     "pin_count": 0,
     "priority": 11,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 1
+    "retries": 2
   }
 ]
