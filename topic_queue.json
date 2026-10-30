@@ -3794,12 +3794,13 @@
   {
     "topic": "Christmas Baking: Cookies, Cakes and Edible Gifts",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/christmas-baking-cookies-cakes-edible-gifts/",
     "pin_count": 0,
     "priority": 6,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-30T14:39:10.362029"
   },
   {
     "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
