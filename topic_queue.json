@@ -3805,12 +3805,13 @@
   {
     "topic": "El Mordjene Spread: What It Is, Where to Find It, and How It Compares to Nutella",
     "intent": "trend",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/el-mordjene-spread-explained/",
     "pin_count": 0,
     "priority": 7,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-30T23:21:09.039622"
   },
   {
     "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
