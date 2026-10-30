@@ -20,6 +20,17 @@ from database.db import (
 )
 from writer.article_generator import generate_article
 try:
+    from writer.article_generator import QuotaExhaustedError
+except Exception:
+    class QuotaExhaustedError(Exception):
+        pass
+
+
+class _QuotaDefer(Exception):
+    """Internal signal: Gemini quota exhausted — leave the topic pending
+    with retries unchanged and stop processing further topics this run."""
+
+try:
     from writer.quality_gate import run_el_quality_gate
 except ImportError:
     run_el_quality_gate = None
@@ -105,6 +116,9 @@ def auto_pilot_process(topic, state):
     try:
         article = generate_article(topic)
         if not article: return False
+    except QuotaExhaustedError as e:
+        logger.warning(f"Gemini quota exhausted while processing '{topic_title}' — topic stays pending, no retry consumed.")
+        raise _QuotaDefer(str(e))
     except Exception as e:
         logger.error(f"Auto-Pilot generation error: {e}")
         return False
@@ -221,6 +235,10 @@ def run_scan(state):
                     if retries >= 3:
                         topic["wp_status"] = "failed"
                         logger.warning(f"Topic '{topic['topic']}' failed after 3 attempts. Marking as failed.")
+            except _QuotaDefer:
+                logger.warning(f"Topic '{topic['topic']}' deferred (Gemini quota). Retries unchanged at {topic.get('retries', 0)}. Stopping queue processing for this run.")
+                _save_queue(queue)
+                break
             except Exception as e:
                 logger.error(f"Critical error processing queue topic: {e}")
             
