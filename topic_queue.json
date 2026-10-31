@@ -3816,12 +3816,13 @@
   {
     "topic": "Healthy Desserts: Sweet Treats That Are Actually Light",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/healthy-desserts-sweet-treats-that-are-actually-light/",
     "pin_count": 0,
     "priority": 8,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-31T10:08:19.218403"
   },
   {
     "topic": "Low Calorie Dinners: Easy Weeknight Recipes Under 500 Calories",
