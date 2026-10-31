@@ -1179,6 +1179,27 @@ def run_pin_worker():
         # Injected priority bonus
         if item.get("priority", 99) == 1:
             score += 50
+        # New-board routing bonus (Oct 2026 traffic sprint): posts that
+        # belong on the new Slow Cooker Recipes / Thanksgiving & Holiday
+        # Table boards must be pinned while they are seasonally relevant,
+        # not after the old backlog. The seasonal calendar's phrase
+        # keywords ("thanksgiving sides") do not match real titles
+        # ("Thanksgiving Recipes: Appetizers, Sides..."), so score the
+        # board themes directly.
+        if any(k in title_lower for k in ["slow cooker", "crockpot", "thanksgiving", "christmas", "holiday"]):
+            score += 200
+        # Recency bonus: a post published in the last 14 days outranks
+        # months-old backlog on ties, so fresh content gets its first
+        # pins inside its relevance window.
+        try:
+            import datetime as _dt
+            _pub = item.get("published_at") or ""
+            if _pub:
+                _age_days = (_dt.datetime.utcnow() - _dt.datetime.fromisoformat(_pub)).days
+                if _age_days <= 14:
+                    score += 120
+        except Exception:
+            pass
         # Break ties by age since last pinned (older first)
         last_pinned = pin_log.get(item.get("wp_url", ""), 0)
         score -= (last_pinned / 1e10)
