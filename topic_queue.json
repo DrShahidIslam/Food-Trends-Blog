@@ -3849,11 +3849,12 @@
   {
     "topic": "Salads Recipes: Fresh, Easy Salads for Every Season",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/salads-recipes-fresh-easy-salads-for-every-season/",
     "pin_count": 0,
     "priority": 11,
     "source": "Semrush+Trends gate Oct 2026",
-    "retries": 0
+    "retries": 0,
+    "published_at": "2026-10-31T22:53:35.818543"
   }
 ]
