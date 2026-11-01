@@ -1307,11 +1307,37 @@ def run_pin_worker():
         if _resolved:
             selected_board = _resolved
             print(f"   📋 Board resolved by name: Slow Cooker Recipes -> {_resolved}")
+    elif "christmas" in t_lower and any(k in t_lower for k in ["baking", "cookie", "cake", "edible gift"]):
+        # Nov 2026: Christmas Baking board (created by Shahid) is the most
+        # relevant FIRST board for Christmas baking posts specifically.
+        _resolved = get_board_id("Christmas Baking")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Christmas Baking -> {_resolved}")
     elif any(k in t_lower for k in ["thanksgiving", "christmas", "holiday"]):
         _resolved = get_board_id("Thanksgiving & Holiday Table")
         if _resolved:
             selected_board = _resolved
             print(f"   📋 Board resolved by name: Thanksgiving & Holiday Table -> {_resolved}")
+    elif any(k in t_lower for k in ["healthy dessert", "light dessert", "low calorie dessert", "sugar free dessert", "sugar-free dessert"]):
+        # Nov 2026: Healthy Desserts board (created by Shahid).
+        _resolved = get_board_id("Healthy Desserts")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Healthy Desserts -> {_resolved}")
+    elif "salad" in t_lower:
+        # Nov 2026: Fresh Salads board (created by Shahid) replaces the old
+        # salads board as the first-save board for salad posts.
+        _resolved = get_board_id("Fresh Salads")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Fresh Salads -> {_resolved}")
+    elif any(k in t_lower for k in ["weeknight", "lazy dinner", "dinner ideas"]):
+        # Nov 2026: Easy Weeknight Dinners board (created by Shahid).
+        _resolved = get_board_id("Easy Weeknight Dinners")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Easy Weeknight Dinners -> {_resolved}")
 
     if not image_prompt:
         image_prompt = f"{angle} of {title}"
