@@ -936,16 +936,33 @@ def pin_request(method, endpoint, **kwargs):
 
 
 def apply_pin_template(title, description, cta="Get the full recipe at the link."):
-    """Enforce pin template: Title Case title (<=100 chars), description
-    150-300 chars practical, ends with a specific CTA. Returns (title, description)."""
+    """Pin template (Nov 2026 research refresh): Title Case title (<=100
+    chars); description ~200-260 chars with only a handful of keywords, no
+    hashtags (deprecated for ranking), ending with one specific CTA. Short
+    descriptions are enriched with what the page delivers, never with the
+    full recipe itself. Returns (title, description). Idempotent."""
     t = (title or "").strip()
     if t and t == t.lower():
         t = t.title()
     t = t[:100]
-    d = (description or "").strip()
-    if cta not in d:
-        d = (d + " " + cta).strip()
+    d = " ".join(w for w in (description or "").split() if not w.startswith("#")).strip()
+    if cta in d:
+        d = d.replace(cta, "").strip()
+    if len(d) < 180 and "printable card" not in d:
+        d = (d + " Full recipe with ingredients, an easy step-by-step method and a printable card, plus serving and storage tips.").strip()
+    d = (d + " " + cta).strip()
     return t, d[:500]
+
+def ensure_pin_alt_text(title, alt_text):
+    """Alt text on every pin (Nov 2026 research: pins with descriptive alt
+    text earned about +123% outbound clicks in Tailwind's benchmark). If the
+    supplied alt text is missing, just the title, or too short to describe
+    the image, build a descriptive one from the title."""
+    a = (alt_text or "").strip()
+    t = (title or "").strip()
+    if len(a) < 50 or a.lower() == t.lower():
+        a = f"{t} — the finished dish shown up close, ready to serve. Full recipe, ingredients list and step-by-step method on el-mordjene.info."
+    return a[:500]
 
 def publish_pin(image_path, title, description, bridge_url, board_id, alt_text=None, retry=True):
     if MOCK_MODE: return True
@@ -958,7 +975,10 @@ def publish_pin(image_path, title, description, bridge_url, board_id, alt_text=N
         board_id = os.getenv("PINTEREST_BOARD_RECIPES") or os.getenv("PINTEREST_BOARD_ID") or "976859044115152343"
 
     with open(image_path, "rb") as f: img_b64 = base64.b64encode(f.read()).decode()
-    if not alt_text: alt_text = title
+    # Normalise every pin at the single publish point (covers both the
+    # queue worker flow and process_new_pin): template + guaranteed alt text.
+    title, description = apply_pin_template(title, description)
+    alt_text = ensure_pin_alt_text(title, alt_text)
     payload = {
         "board_id": str(board_id), "title": title[:100], "description": description[:500],
         "link": bridge_url,
@@ -1050,7 +1070,7 @@ def process_new_pin(title, slug, url, description, board_id):
         gemini_data = generate_pin_content_with_gemini(title, pin_index=i)
         if gemini_data:
             p_title = gemini_data.get("title", title)
-            p_desc = gemini_data.get("description", description) + f" {gemini_data.get('hashtags', '')}"
+            p_desc = gemini_data.get("description", description)
             recipe_name = gemini_data.get("recipe_name", title)
             hook_text = gemini_data.get("hook", "")
             alt_text = gemini_data.get("alt_text", p_title)
