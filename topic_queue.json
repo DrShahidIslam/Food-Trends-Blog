@@ -3856,5 +3856,15 @@
     "source": "Semrush+Trends gate Oct 2026",
     "retries": 0,
     "published_at": "2026-10-31T22:53:35.818543"
+  },
+  {
+    "topic": "Viral Dessert Guide: The Best Pistachio Chocolate Treats in Orlando - Visit Orlando",
+    "intent": "trend",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/viral-dessert-guide-pistachio-chocolate-orlando/",
+    "pin_count": 0,
+    "priority": 20,
+    "source": "Auto-Pilot",
+    "published_at": "2026-11-01T10:35:57.359210"
   }
 ]
