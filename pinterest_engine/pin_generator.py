@@ -1047,13 +1047,29 @@ def refresh_pinterest_token():
         return False
 
 def get_board_id(board_name):
+    """Resolve a board ID by exact name. Nov 2026 fix: the stored access
+    token is routinely expired by the time the worker runs (publish logs
+    show a 401 + refresh on pin creation), and board selection happens
+    BEFORE publish_pin's own 401-refresh — so name resolution silently
+    returned None on every run, pins fell back to the old boards, and the
+    new boards stayed at 0 pins. On 401, refresh once and retry, exactly
+    like publish_pin does. Failures are now logged, never silent."""
+    global PINTEREST_ACCESS_TOKEN
     if not PINTEREST_ACCESS_TOKEN: return None
     headers = {"Authorization": f"Bearer {PINTEREST_ACCESS_TOKEN}"}
     res = pin_request("GET", "/boards", headers=headers)
+    if res is not None and res.status_code == 401:
+        print("   [Pinterest API] Token expired (401) during board lookup. Refreshing and retrying...", flush=True)
+        if refresh_pinterest_token():
+            headers = {"Authorization": f"Bearer {PINTEREST_ACCESS_TOKEN}"}
+            res = pin_request("GET", "/boards", headers=headers)
     if res is not None and res.status_code == 200:
         for b in res.json().get("items", []):
             if b.get("name", "").lower().strip() == board_name.lower().strip():
                 return b.get("id")
+        print(f"   [Pinterest API] Board name NOT found among account boards: {board_name}", flush=True)
+    else:
+        print(f"   [Pinterest API] Board lookup failed: HTTP {res.status_code if res is not None else 'no response'}", flush=True)
     return None
 
 def process_new_pin(title, slug, url, description, board_id):
