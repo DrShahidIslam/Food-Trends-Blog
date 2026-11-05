@@ -3866,5 +3866,15 @@
     "priority": 20,
     "source": "Auto-Pilot",
     "published_at": "2026-11-01T10:35:57.359210"
+  },
+  {
+    "topic": "We Tried This Grandma's Viral Dessert Dip and It's a '15/10' - Allrecipes",
+    "intent": "trend",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/viral-dessert-dip-recipe/",
+    "pin_count": 0,
+    "priority": 20,
+    "source": "Auto-Pilot",
+    "published_at": "2026-11-05T00:35:41.353124"
   }
 ]
