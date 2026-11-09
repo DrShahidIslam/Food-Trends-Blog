@@ -158,9 +158,9 @@ def generate_pin_content_with_gemini(topic, pin_index=0):
     # Model from config
     try:
         from alerts_engine import config as wp_config
-        model_name = getattr(wp_config, "GEMINI_MODEL", "gemini-3.1-flash-lite-preview")
+        model_name = getattr(wp_config, "GEMINI_MODEL", "gemini-3.5-flash-lite")
     except:
-        model_name = "gemini-3.1-flash-lite-preview"
+        model_name = "gemini-3.5-flash-lite"
 
     for key in GEMINI_API_KEYS:
         clean_key = key.strip().strip("'").strip('"')
