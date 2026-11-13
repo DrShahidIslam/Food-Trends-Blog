@@ -934,6 +934,35 @@ def pin_request(method, endpoint, **kwargs):
         print(f"   [Pinterest API] Request Exception: {e}", flush=True)
         return None
 
+def apply_pin_template(title, description, cta="Get the full recipe at the link."):
+    """Pin template (Nov 2026 research refresh): Title Case title (<=100
+    chars); description ~200-260 chars with only a handful of keywords, no
+    hashtags (deprecated for ranking), ending with one specific CTA. Short
+    descriptions are enriched with what the page delivers, never with the
+    full recipe itself. Returns (title, description). Idempotent."""
+    t = (title or "").strip()
+    if t and t == t.lower():
+        t = t.title()
+    t = t[:100]
+    d = " ".join(w for w in (description or "").split() if not w.startswith("#")).strip()
+    if cta in d:
+        d = d.replace(cta, "").strip()
+    if len(d) < 180 and "printable card" not in d:
+        d = (d + " Full recipe with ingredients, an easy step-by-step method and a printable card, plus serving and storage tips.").strip()
+    d = (d + " " + cta).strip()
+    return t, d[:500]
+
+def ensure_pin_alt_text(title, alt_text):
+    """Alt text on every pin (Nov 2026 research: pins with descriptive alt
+    text earned about +123% outbound clicks in Tailwind's benchmark). If the
+    supplied alt text is missing, just the title, or too short to describe
+    the image, build a descriptive one from the title."""
+    a = (alt_text or "").strip()
+    t = (title or "").strip()
+    if len(a) < 50 or a.lower() == t.lower():
+        a = f"{t} — the finished dish shown up close, ready to serve. Full recipe, ingredients list and step-by-step method on el-mordjene.info."
+    return a[:500]
+
 def publish_pin(image_path, title, description, bridge_url, board_id, alt_text=None, retry=True):
     if MOCK_MODE: return True
     global PINTEREST_ACCESS_TOKEN
@@ -945,7 +974,10 @@ def publish_pin(image_path, title, description, bridge_url, board_id, alt_text=N
         board_id = os.getenv("PINTEREST_BOARD_RECIPES") or os.getenv("PINTEREST_BOARD_ID") or "976859044115152343"
 
     with open(image_path, "rb") as f: img_b64 = base64.b64encode(f.read()).decode()
-    if not alt_text: alt_text = title
+    # Normalise every pin at the single publish point (covers both the
+    # queue worker flow and process_new_pin): template + guaranteed alt text.
+    title, description = apply_pin_template(title, description)
+    alt_text = ensure_pin_alt_text(title, alt_text)
     payload = {
         "board_id": str(board_id), "title": title[:100], "description": description[:500],
         "link": bridge_url,
@@ -1014,13 +1046,29 @@ def refresh_pinterest_token():
         return False
 
 def get_board_id(board_name):
+    """Resolve a board ID by exact name. Nov 2026 fix: the stored access
+    token is routinely expired by the time the worker runs (publish logs
+    show a 401 + refresh on pin creation), and board selection happens
+    BEFORE publish_pin's own 401-refresh — so name resolution silently
+    returned None on every run, pins fell back to the old boards, and the
+    new boards stayed at 0 pins. On 401, refresh once and retry, exactly
+    like publish_pin does. Failures are now logged, never silent."""
+    global PINTEREST_ACCESS_TOKEN
     if not PINTEREST_ACCESS_TOKEN: return None
     headers = {"Authorization": f"Bearer {PINTEREST_ACCESS_TOKEN}"}
     res = pin_request("GET", "/boards", headers=headers)
+    if res is not None and res.status_code == 401:
+        print("   [Pinterest API] Token expired (401) during board lookup. Refreshing and retrying...", flush=True)
+        if refresh_pinterest_token():
+            headers = {"Authorization": f"Bearer {PINTEREST_ACCESS_TOKEN}"}
+            res = pin_request("GET", "/boards", headers=headers)
     if res is not None and res.status_code == 200:
         for b in res.json().get("items", []):
             if b.get("name", "").lower().strip() == board_name.lower().strip():
                 return b.get("id")
+        print(f"   [Pinterest API] Board name NOT found among account boards: {board_name}", flush=True)
+    else:
+        print(f"   [Pinterest API] Board lookup failed: HTTP {res.status_code if res is not None else 'no response'}", flush=True)
     return None
 
 def process_new_pin(title, slug, url, description, board_id):
@@ -1037,7 +1085,7 @@ def process_new_pin(title, slug, url, description, board_id):
         gemini_data = generate_pin_content_with_gemini(title, pin_index=i)
         if gemini_data:
             p_title = gemini_data.get("title", title)
-            p_desc = gemini_data.get("description", description) + f" {gemini_data.get('hashtags', '')}"
+            p_desc = gemini_data.get("description", description)
             recipe_name = gemini_data.get("recipe_name", title)
             hook_text = gemini_data.get("hook", "")
             alt_text = gemini_data.get("alt_text", p_title)
@@ -1166,6 +1214,27 @@ def run_pin_worker():
         # Injected priority bonus
         if item.get("priority", 99) == 1:
             score += 50
+        # New-board routing bonus (Oct 2026 traffic sprint): posts that
+        # belong on the new Slow Cooker Recipes / Thanksgiving & Holiday
+        # Table boards must be pinned while they are seasonally relevant,
+        # not after the old backlog. The seasonal calendar's phrase
+        # keywords ("thanksgiving sides") do not match real titles
+        # ("Thanksgiving Recipes: Appetizers, Sides..."), so score the
+        # board themes directly.
+        if any(k in title_lower for k in ["slow cooker", "crockpot", "thanksgiving", "christmas", "holiday"]):
+            score += 200
+        # Recency bonus: a post published in the last 14 days outranks
+        # months-old backlog on ties, so fresh content gets its first
+        # pins inside its relevance window.
+        try:
+            import datetime as _dt
+            _pub = item.get("published_at") or ""
+            if _pub:
+                _age_days = (_dt.datetime.utcnow() - _dt.datetime.fromisoformat(_pub)).days
+                if _age_days <= 14:
+                    score += 120
+        except Exception:
+            pass
         # Break ties by age since last pinned (older first)
         last_pinned = pin_log.get(item.get("wp_url", ""), 0)
         score -= (last_pinned / 1e10)
@@ -1180,7 +1249,13 @@ def run_pin_worker():
     if url:
         wp_slug = url.rstrip('/').split('/')[-1]
     slug = wp_slug if wp_slug else target.get("topic", "").lower().replace(" ", "-")
-    description = f"Check out this amazing {title} recipe and guide on el-mordjene.info!"
+    # Pin template (Oct 2026 plan): title = destination intent, description ends
+    # with a specific click reason only the page delivers. Never a generic
+    # "check out this recipe" and never the full recipe on the pin.
+    title = title.strip()
+    if title and title == title.lower():
+        title = title.title()
+    description = f"{title}: full recipe, ingredients, steps and printable card inside. Get the full recipe at the link."
     pin_index = target.get("pin_count", 0)
     
     is_seasonal = any(kw in title.lower() for kw in seasonal_keywords)
@@ -1238,6 +1313,46 @@ def run_pin_worker():
         board_key = "trend"
     
     selected_board = board_mapping[board_key]
+    # NEW BOARDS (Oct 2026, created by Shahid in Pinterest): resolve by exact
+    # board NAME via the Pinterest API — numeric IDs are not shown in
+    # Pinterest's UI, so never hardcode a guessed ID. Fall back to the
+    # existing board if name resolution returns None.
+    if any(k in t_lower for k in ["slow cooker", "crockpot"]):
+        _resolved = get_board_id("Slow Cooker Recipes")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Slow Cooker Recipes -> {_resolved}")
+    elif "christmas" in t_lower and any(k in t_lower for k in ["baking", "cookie", "cake", "edible gift"]):
+        # Nov 2026: Christmas Baking board (created by Shahid) is the most
+        # relevant FIRST board for Christmas baking posts specifically.
+        _resolved = get_board_id("Christmas Baking")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Christmas Baking -> {_resolved}")
+    elif any(k in t_lower for k in ["thanksgiving", "christmas", "holiday"]):
+        _resolved = get_board_id("Thanksgiving & Holiday Table")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Thanksgiving & Holiday Table -> {_resolved}")
+    elif any(k in t_lower for k in ["healthy dessert", "light dessert", "low calorie dessert", "sugar free dessert", "sugar-free dessert"]):
+        # Nov 2026: Healthy Desserts board (created by Shahid).
+        _resolved = get_board_id("Healthy Desserts")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Healthy Desserts -> {_resolved}")
+    elif "salad" in t_lower:
+        # Nov 2026: Fresh Salads board (created by Shahid) replaces the old
+        # salads board as the first-save board for salad posts.
+        _resolved = get_board_id("Fresh Salads")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Fresh Salads -> {_resolved}")
+    elif any(k in t_lower for k in ["weeknight", "lazy dinner", "dinner ideas"]):
+        # Nov 2026: Easy Weeknight Dinners board (created by Shahid).
+        _resolved = get_board_id("Easy Weeknight Dinners")
+        if _resolved:
+            selected_board = _resolved
+            print(f"   📋 Board resolved by name: Easy Weeknight Dinners -> {_resolved}")
     
     if not image_prompt:
         image_prompt = f"{angle} of {title}"
