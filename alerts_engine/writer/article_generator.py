@@ -1030,6 +1030,72 @@ def _parse_article_output(raw_text, intent=None):
         return None
 
 
+class QuotaExhaustedError(Exception):
+    """Gemini quota exhausted. Callers must NOT consume a topic retry for
+    this — quota resets daily, the topic stays pending for the next run."""
+
+
+def _visible_word_count(html_text):
+    """Count words the way the quality gate does: visible body text only,
+    with script/style blocks (incl. recipe JSON-LD) stripped. The old
+    len(content.split()) count included tags and schema text and read
+    ~25% higher than the gate, so articles the generator logged as
+    1,297 words failed the gate at 941."""
+    t = re.sub(r"<script.*?</script>|<style.*?</style>", " ", html_text or "", flags=re.S | re.I)
+    t = re.sub(r"<[^>]+>", " ", t)
+    from html import unescape as _un
+    t = _un(t)
+    return len(t.split())
+
+
+def _expand_article(article, topic_title, primary_keyword):
+    """Expansion pass (Oct 2026 fix): if the visible word count is under
+    target, ask Gemini for genuinely new sections (extra subtopic section,
+    practical tips, and a 4-6 question FAQ) and append them. Up to 2
+    passes. Never raises: on any error it keeps what it has, except quota
+    exhaustion which propagates so the topic is deferred, not failed."""
+    TARGET = 1400
+    content = article.get("content", "") or ""
+    visible = _visible_word_count(content)
+    passes = 0
+    while visible < TARGET and passes < 2:
+        passes += 1
+        prompt = (
+            f"You are expanding an existing article titled '{article.get('title', topic_title)}' "
+            f"about '{topic_title}' (primary keyword: {primary_keyword or topic_title}). "
+            f"The article currently has {visible} words of visible body text and needs at least {TARGET}. "
+            "Write 500-700 words of NEW HTML sections only, with real, useful content and no filler: "
+            "(1) one new <h2> section covering a subtopic, variation, storage, serving or troubleshooting angle not already covered, "
+            "(2) a <h2>Frequently Asked Questions</h2> section with 4-6 real questions as <h3> with short answers, if the article does not already have an FAQ. "
+            "Include 2 natural internal links to https://el-mordjene.info/recipes/ or other el-mordjene.info pages where they genuinely fit. "
+            "Do NOT repeat the introduction or any existing section. Return ONLY the HTML fragment, no code fences, no commentary."
+        )
+        try:
+            resp = generate_content_with_fallback(model=config.GEMINI_MODEL, contents=prompt)
+            frag = (resp.text or "").strip()
+        except Exception as e:
+            if "All Gemini API keys failed" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                raise QuotaExhaustedError(str(e))
+            logger.warning(f"   Expansion pass {passes} failed ({e}); keeping current length.")
+            break
+        frag = re.sub(r"^```[a-z]*|```$", "", frag, flags=re.M).strip()
+        if not frag or "<h2" not in frag.lower():
+            logger.warning(f"   Expansion pass {passes} returned no usable sections; stopping.")
+            break
+        # Insert before any trailing schema <script> block, else append
+        idx = content.lower().find("<script")
+        if idx > 0:
+            content = content[:idx] + frag + "\n" + content[idx:]
+        else:
+            content = content + "\n" + frag
+        new_visible = _visible_word_count(content)
+        logger.info(f"   Expansion pass {passes}: visible words {visible} -> {new_visible}")
+        visible = new_visible
+    article["content"] = content
+    article["word_count"] = visible
+    return article
+
+
 def generate_article(topic, source_urls=None):
     """
     Generate a complete SEO-optimized article for a trending topic.
@@ -1095,6 +1161,8 @@ def generate_article(topic, source_urls=None):
         logger.info(f"   Gemini responded ({len(raw_output)} chars)")
 
     except Exception as e:
+        if "All Gemini API keys failed" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+            raise QuotaExhaustedError(str(e))
         logger.error(f"   Gemini API error: {e}")
         return None
 
@@ -1103,7 +1171,11 @@ def generate_article(topic, source_urls=None):
     if article:
         article["intent"] = intent
         article["sources_used"] = [s.get("source_domain", "") for s in source_texts]
-        article["word_count"] = len(article.get("content", "").split())
+        article["word_count"] = _visible_word_count(article.get("content", ""))
+        # Expand short articles BEFORE the quality gate sees them (Oct 2026):
+        # the generator's raw output lands ~900-990 visible words, under the
+        # gate's 1,000 minimum; expansion adds real sections, not filler.
+        article = _expand_article(article, topic.get("topic", ""), topic.get("matched_keyword", "") or topic.get("topic", ""))
         article["generation_checks"] = _build_generation_checks(
             article,
             topic.get("matched_keyword", "") or topic.get("topic", ""),

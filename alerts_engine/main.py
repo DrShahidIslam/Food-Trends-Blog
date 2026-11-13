@@ -19,6 +19,21 @@ from database.db import (
     is_topic_already_covered
 )
 from writer.article_generator import generate_article
+try:
+    from writer.article_generator import QuotaExhaustedError
+except Exception:
+    class QuotaExhaustedError(Exception):
+        pass
+
+
+class _QuotaDefer(Exception):
+    """Internal signal: Gemini quota exhausted — leave the topic pending
+    with retries unchanged and stop processing further topics this run."""
+
+try:
+    from writer.quality_gate import run_el_quality_gate
+except ImportError:
+    run_el_quality_gate = None
 from publisher.wordpress_client import (
     create_post, test_wordpress_connection
 )
@@ -101,9 +116,26 @@ def auto_pilot_process(topic, state):
     try:
         article = generate_article(topic)
         if not article: return False
+    except QuotaExhaustedError as e:
+        logger.warning(f"Gemini quota exhausted while processing '{topic_title}' — topic stays pending, no retry consumed.")
+        raise _QuotaDefer(str(e))
     except Exception as e:
         logger.error(f"Auto-Pilot generation error: {e}")
         return False
+
+    # 1b. Quality gate (fail-closed): do not publish thin / unlinked / lowercase-title articles
+    if run_el_quality_gate is not None:
+        try:
+            passed, gate_failures, gate_warnings = run_el_quality_gate(article)
+        except Exception as e:
+            logger.warning(f"Quality gate error (publishing anyway): {e}")
+            passed, gate_failures, gate_warnings = True, [], []
+        for w in gate_warnings:
+            logger.warning(f"Quality gate warning: {w}")
+        if not passed:
+            for f in gate_failures:
+                logger.error(f"Quality gate FAILED: {f}")
+            return False
 
     # 2. Generate Image
     image_path = None
@@ -203,6 +235,10 @@ def run_scan(state):
                     if retries >= 3:
                         topic["wp_status"] = "failed"
                         logger.warning(f"Topic '{topic['topic']}' failed after 3 attempts. Marking as failed.")
+            except _QuotaDefer:
+                logger.warning(f"Topic '{topic['topic']}' deferred (Gemini quota). Retries unchanged at {topic.get('retries', 0)}. Stopping queue processing for this run.")
+                _save_queue(queue)
+                break
             except Exception as e:
                 logger.error(f"Critical error processing queue topic: {e}")
             
@@ -210,6 +246,9 @@ def run_scan(state):
             if published_count >= max_per_run: break
             time.sleep(10)
         conn.close()
+
+    if not pending:
+        logger.error("PENDING=0 ALERT: topic_queue.json has no pending topics — publisher ran empty. Refill the queue from the Semrush+Trends gate log before the next run.")
 
     # 2. Aggregated Discovery (RSS, NewsAPI, Google Trends, Pinterest)
     if published_count < max_per_run:
