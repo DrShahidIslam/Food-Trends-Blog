@@ -3343,13 +3343,14 @@
   {
     "topic": "Roasted Sweet Potato and Black Bean Chili",
     "intent": "recipe",
-    "wp_status": "pending",
-    "wp_url": "",
+    "wp_status": "done",
+    "wp_url": "https://el-mordjene.info/roasted-sweet-potato-and-black-bean-chili/",
     "pin_count": 0,
     "priority": 2,
     "source": "Pinterest Psychology Splinter Engine",
     "retries": 1,
-    "created_at": "2026-08-23T17:37:08.450997"
+    "created_at": "2026-08-23T17:37:08.450997",
+    "published_at": "2026-11-18T16:46:30.518354"
   },
   {
     "topic": "Autumn Harvest Salad with Apples Cranberries and Maple Dressing",
