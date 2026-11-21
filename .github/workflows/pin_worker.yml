@@ -1,8 +1,6 @@
 name: Pinterest Pin Worker
 
 on:
-  schedule:
-    - cron: '0 2,8,14,20 * * *'  # 4 high-quality pins daily spaced every 6 hours (02:00, 08:00, 14:00, 20:00 UTC)
   workflow_dispatch:      # Manual trigger
 
 permissions:
